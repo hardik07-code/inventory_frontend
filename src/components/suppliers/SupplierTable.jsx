@@ -1,7 +1,10 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Chip, IconButton, Tooltip } from '@mui/material';
 import { Edit2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SupplierTable({ suppliers, handleOpenModal }) {
+  const navigate = useNavigate();
+
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }}>
@@ -16,8 +19,11 @@ export default function SupplierTable({ suppliers, handleOpenModal }) {
         <TableBody>
           {suppliers.map((row) => (
             <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { bgcolor: 'rgba(0,0,0,0.01)' } }}>
-              <TableCell>
-                <Typography fontWeight="700">{row.name}</Typography>
+              <TableCell 
+                onClick={() => navigate(`/suppliers/${row.id}/balance-sheet`)}
+                sx={{ cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
+              >
+                <Typography fontWeight="700" sx={{ textDecoration: 'underline', textUnderlineOffset: 4, textDecorationColor: 'rgba(0,0,0,0.2)' }}>{row.name}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="body2" color="text.secondary" fontWeight="500">{row.contact}</Typography>

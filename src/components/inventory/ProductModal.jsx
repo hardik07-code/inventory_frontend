@@ -81,6 +81,9 @@ export default function ProductModal({ open, onClose, selectedProduct, productFo
           <Grid item xs={12} sm={6}>
             <TextField fullWidth variant="outlined" type="number" label="Quantity in a Unit" disabled={!!selectedProduct} value={productForm.unitQuantity} onChange={(e) => setProductForm({ ...productForm, unitQuantity: e.target.value })} helperText={selectedProduct ? "Modifiable via Stock actions" : ""} />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth variant="outlined" type="number" label="Dead Stock (Month Wise)" value={productForm.deadStock !== undefined ? productForm.deadStock : 0} onChange={(e) => setProductForm({ ...productForm, deadStock: e.target.value })} />
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions sx={{ p: 3, pt: 1 }}>

@@ -6,6 +6,7 @@ import PageHeader from '../components/common/PageHeader';
 import SupplierTable from '../components/suppliers/SupplierTable';
 import SupplierModal from '../components/suppliers/SupplierModal';
 
+
 export default function Suppliers() {
   const { suppliers, addSupplier, updateSupplier } = useInventory();
   const [searchTerm, setSearchTerm] = useState('');

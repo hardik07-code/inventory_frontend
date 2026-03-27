@@ -13,6 +13,7 @@ export default function ProductTable({ products, handleOpenProductModal, handleO
             <TableCell sx={{ fontWeight: 'bold' }}>Product Details</TableCell>
             <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Category</TableCell>
             <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Quantity in a Unit</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Dead Stock</TableCell>
             <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Quick Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -33,6 +34,11 @@ export default function ProductTable({ products, handleOpenProductModal, handleO
                 {row.unitQuantity === 0 && (
                   <Chip label="Empty Units" color="error" size="small" sx={{ mt: 0.5 }} />
                 )}
+              </TableCell>
+              <TableCell align="center">
+                <Typography fontWeight="bold" color="error.main">
+                  {row.deadStock || 0}
+                </Typography>
               </TableCell>
               <TableCell align="center">
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
