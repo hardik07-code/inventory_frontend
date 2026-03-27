@@ -1,22 +1,14 @@
 import { create } from 'zustand';
-
-const initialProducts = [
-  { id: 'p1', name: 'Organic Coffee Beans', sku: 'GRO-COF-01', category: 'Groceries', unitQuantity: 45, mismatch: 0, price: 12.99 },
-  { id: 'p2', name: 'Almond Milk (1L)', sku: 'GRO-ALM-02', category: 'Groceries', unitQuantity: 8, mismatch: 2, price: 4.49 },
-  { id: 'p3', name: 'Eco-Friendly Detergent', sku: 'CLN-DET-01', category: 'Cleaning', unitQuantity: 12, mismatch: 0, price: 15.00 },
-  { id: 'p4', name: 'AA Batteries (4-pack)', sku: 'ELC-BAT-01', category: 'Electronics', unitQuantity: 0, mismatch: 0, price: 5.99 },
-  { id: 'p5', name: 'Whole Wheat Bread', sku: 'BAK-BRD-01', category: 'Bakery', unitQuantity: 25, mismatch: 1, price: 3.49 },
-];
+import { productService } from '../services/productService';
 
 const initialTransactions = [
   { id: 't1', productId: 'p1', type: 'IN', quantity: 50, date: new Date(Date.now() - 86400000 * 2).toISOString(), notes: 'Restock' },
   { id: 't2', productId: 'p2', type: 'OUT', quantity: 2, date: new Date(Date.now() - 86400000 * 1).toISOString(), notes: 'Sale' },
-  { id: 't3', productId: 'p4', type: 'OUT', quantity: 5, date: new Date().toISOString(), notes: 'Sale' },
 ];
 
 const initialSuppliers = [
-  { id: 's1', name: 'Global Distributing', contact: 'john@global.com', status: 'Active' },
-  { id: 's2', name: 'Fresh Farms Agency', contact: 'orders@freshfarms.inc', status: 'Active' },
+  { id: '1', name: 'Global Distributing', contact: 'john@global.com', status: 'Active' },
+  { id: '2', name: 'Fresh Farms Agency', contact: 'orders@freshfarms.inc', status: 'Active' },
 ];
 
 const calcStats = (prods) => ({
@@ -26,26 +18,49 @@ const calcStats = (prods) => ({
   totalValue: prods.reduce((sum, p) => sum + (p.unitQuantity * p.price), 0)
 });
 
-export const useInventory = create((set) => ({
-  products: initialProducts,
+export const useInventory = create((set, get) => ({
+  products: [],
   transactions: initialTransactions,
   suppliers: initialSuppliers,
-  stats: calcStats(initialProducts),
+  stats: { totalItems: 0, mismatchItems: 0, emptyItems: 0, totalValue: 0 },
+  loading: false,
+
+  fetchProducts: async () => {
+    set({ loading: true });
+    try {
+      const mappedProducts = await productService.getAllProducts();
+      set({ products: mappedProducts, stats: calcStats(mappedProducts), loading: false });
+    } catch (error) {
+      console.error('Failed to fetch products', error);
+      set({ loading: false });
+    }
+  },
 
   addSupplier: (supplier) => set((state) => ({
-    suppliers: [...state.suppliers, { ...supplier, id: `s${Date.now()}` }]
+    suppliers: [...state.suppliers, { ...supplier, id: `${Date.now()}` }]
   })),
 
   updateSupplier: (id, updatedFields) => set((state) => ({
     suppliers: state.suppliers.map(s => s.id === id ? { ...s, ...updatedFields } : s)
   })),
 
-  addProduct: (product) => set((state) => {
-    const updated = [...state.products, { ...product, id: `p${Date.now()}` }];
-    return { products: updated, stats: calcStats(updated) };
-  }),
+  addProduct: async (product) => {
+    try {
+      const data = await productService.addProduct(product);
+      
+      if (data.success) {
+        // refresh list
+        get().fetchProducts();
+      } else {
+        console.error('Failed to add product', data);
+      }
+    } catch (error) {
+      console.error('Error adding product', error);
+    }
+  },
 
   updateProduct: (id, updatedFields) => set((state) => {
+    // Note: If you have an update API, put it here.
     const updated = state.products.map(p => p.id === id ? { ...p, ...updatedFields } : p);
     return { products: updated, stats: calcStats(updated) };
   }),
