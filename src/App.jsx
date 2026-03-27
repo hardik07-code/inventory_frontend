@@ -6,6 +6,7 @@ import Transactions from './pages/Transactions';
 import Reports from './pages/Reports';
 import Login from './pages/Login';
 import Suppliers from './pages/Suppliers';
+import SupplierBalanceSheet from './pages/SupplierBalanceSheet';
 import { useAuth } from './store/AuthContext';
 
 function ProtectedRoute() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="inventory" element={<Inventory />} />
             <Route path="suppliers" element={<Suppliers />} />
+            <Route path="suppliers/:id/balance-sheet" element={<SupplierBalanceSheet />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="reports" element={<Reports />} />
           </Route>

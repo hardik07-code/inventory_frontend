@@ -24,7 +24,7 @@ export default function Inventory() {
   const [transactionType, setTransactionType] = useState('IN');
 
   // form data
-  const [productForm, setProductForm] = useState({ name: '', sku: '', category: '', price: 0, unitQuantity: 0, supplierId: '' });
+  const [productForm, setProductForm] = useState({ name: '', sku: '', category: '', price: 0, unitQuantity: 0, supplierId: '', deadStock: 0 });
   const [transactionForm, setTransactionForm] = useState({ quantity: 1, notes: '' });
 
   const filteredProducts = useMemo(() => {
@@ -40,16 +40,27 @@ export default function Inventory() {
       setProductForm(product);
     } else {
       setSelectedProduct(null);
-      setProductForm({ name: '', sku: '', category: '', price: 0, unitQuantity: 0, supplierId: '' });
+      setProductForm({ name: '', sku: '', category: '', price: 0, unitQuantity: 0, supplierId: '', deadStock: 0 });
     }
     setProductModalOpen(true);
   };
 
   const handleSaveProduct = () => {
+    if (!selectedProduct) {
+      const existingProduct = products.find(p => 
+        (p.name.toLowerCase() === productForm.name.toLowerCase() || p.sku.toLowerCase() === productForm.sku.toLowerCase()) && p.deadStock > 0
+      );
+      if (existingProduct) {
+        if (!window.confirm(`This product is also ${existingProduct.deadStock} items in dead stock. Do you want to proceed?`)) {
+          return;
+        }
+      }
+    }
+
     if (selectedProduct) {
-      updateProduct(selectedProduct.id, productForm);
+      updateProduct(selectedProduct.id, { ...productForm, deadStock: Number(productForm.deadStock) || 0 });
     } else {
-      addProduct({ ...productForm, price: Number(productForm.price), unitQuantity: Number(productForm.unitQuantity) });
+      addProduct({ ...productForm, price: Number(productForm.price), unitQuantity: Number(productForm.unitQuantity), deadStock: Number(productForm.deadStock) || 0 });
     }
     setProductModalOpen(false);
   };
