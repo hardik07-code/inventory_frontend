@@ -36,7 +36,7 @@ export const productService = {
   async addProduct(product) {
     const payload = {
       productName: product.name,
-      categoryId: 1, // Currently hardcoded for simplicity until dynamic category selection is built
+      categoryId: Number(product.category) || 1,
       minStock: 5,
       sku: product.sku,
       unit: Number(product.unitQuantity) || 1,

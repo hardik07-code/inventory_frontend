@@ -3,7 +3,7 @@ import { Plus, Edit2 } from 'lucide-react';
 import { useInventory } from '../../store/InventoryContext';
 
 export default function ProductModal({ open, onClose, selectedProduct, productForm, setProductForm, handleSaveProduct }) {
-  const { suppliers } = useInventory();
+  const { suppliers, categories } = useInventory();
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1 } }}>
@@ -45,12 +45,13 @@ export default function ProductModal({ open, onClose, selectedProduct, productFo
               value={productForm.category || ''} 
               onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
             >
-              <MenuItem value="Groceries">Groceries</MenuItem>
-              <MenuItem value="Electronics">Electronics</MenuItem>
-              <MenuItem value="Cleaning">Cleaning</MenuItem>
-              <MenuItem value="Bakery">Bakery</MenuItem>
-              <MenuItem value="Beverages">Beverages</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
+              {categories && categories.length > 0 ? (
+                categories.map(c => (
+                  <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled value=""><em>No Categories Available</em></MenuItem>
+              )}
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
